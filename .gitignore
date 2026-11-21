@@ -1,0 +1,19 @@
+# Node
+node_modules/
+dist/
+coverage/
+
+# Secrets: never commit real settings (the .env.example files are fine)
+.env
+.env.*
+!.env.example
+
+# macOS / Xcode
+.DS_Store
+xcuserdata/
+DerivedData/
+*.xcuserstate
+build/
+
+# The company's challenge PDF is not ours to publish
+Code_Challenge*.pdf
