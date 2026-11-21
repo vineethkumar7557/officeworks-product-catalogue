@@ -87,7 +87,6 @@
   and never contains a Fake Store address. A real catalogue would return images from its own storage, which is a change inside the backend adapter.
 - **Errors:** one `APIError` type with customer-readable text. A cancelled request (the user went back) is not shown as an error.
 - **Unit tests start the app without building any screen or making network calls** (the scene delegate skips setup when XCTest is running).
-- **Home screen in Step 8 is a temporary check screen** that proves the app reaches the backend. Step 9 replaces it.
 
 ## Design choices (iOS screens)
 - **Navigation:** screens never open other screens. They report taps through closures, and `AppRouter` decides what opens next. Fewer links between screens, and easy to follow.
@@ -124,10 +123,22 @@
 
 ## Requirements dropped or simplified, and why
 - No database for enquiries: the brief only asks for an email. Storing enquiries is the first thing to add next.
-- No UI tests for the iOS app: time-box.
+- No UI tests (XCUITest) and no screenshot tests for the iOS app: time-box. Screen behaviour is covered by unit tests with a fake backend
+  and the whole flow was checked by hand (screenshots in `docs/screenshots`).
 - No automatic CI pipeline (for example GitHub Actions): the same commands run locally; adding CI is the first "next step".
 - No shared test for "any ProductRepository behaves the same" (a contract test). It would prove an adapter swap even more strongly.
-- (more are added as we go)
+- iPhone only and portrait only. No iPad layout, no landscape.
+- No pull-to-refresh, no pagination, no offline cache (20 products in total).
+- No saved draft of an unsent enquiry.
+
+## Known gaps (honest list)
+- **Some iOS view code is not unit tested.** The coverage report (78.6% for the app) shows `CategoryCell` and `SectionHeaderView` at 0% and `ProductCell` at
+  11%, because the tests never lay out the real collection view. These are checked by eye (screenshots), not by tests. Logic (view models, validation,
+  networking, router, screen wiring) is at or near 100%.
+- **The project needs Xcode 27 to open.** It was created with Xcode 27.2 (new project file format). Recreating it with an older Xcode would remove this limit.
+- **Real services are checked by hand, not by tests:** the real Fake Store API (`npm run try:fakestore`) and a real SMTP server (Mailpit via `docker compose up`).
+- **The rate limit is in memory** (resets on restart, per server).
+- **Search reads title, description and category.** Fake Store descriptions are long, so a common word can match many products.
 
 ## How the design supports growing beyond the PoC
 - Product data source: only `FakeStoreProductRepository` knows about Fake Store. Swap it for a real database
@@ -138,4 +149,14 @@
 - Look and feel lives in one Theme file, so a new design is a small change.
 
 ## What I would do next with another day
-- (filled in at the end)
+In this order, because each one makes the next safer:
+1. **CI** (GitHub Actions): backend tests and coverage, `typecheck`, and `xcodebuild test` on every pull request.
+2. **Store enquiries** in a database (for example Postgres) before emailing, and send the email from a retry queue. Then a failed email never loses an enquiry.
+3. **A real email provider** (SES) as a second `EmailSender` adapter. No service or route changes.
+4. **Close the iOS test gaps:** dequeue cells in tests (cells and header at 0%) and add a few snapshot tests for the main screens.
+5. **A shared contract test** for `ProductRepository`, run against the Fake Store adapter and any future database adapter.
+6. **Deploy:** the same Docker image on AWS (ECS Fargate behind a load balancer), secrets in SSM or Secrets Manager. Set Express `trust proxy`
+   and move the rate limit to Redis at the same time.
+7. **Product images from our own storage** and a currency field in the backend Product, instead of Fake Store links and a fixed `$`.
+8. **App polish:** load Home requests in parallel, pull-to-refresh, iPad layout, a Dynamic Type and VoiceOver audit, localisation.
+9. **An OpenAPI description of the API**, so the Swift models can be checked against it automatically.

@@ -15,7 +15,12 @@
 2. Step 4 (search): before writing code the AI pointed out that a plain "contains" search makes "men" also match
    "women's clothing", and proposed "typed word must start a word in the product" matching. I accepted it and it is
    covered by a test.
-3. (add the next ones as they happen)
+3. Workflow instruction from me after Step 4: "don't explain anything right now, we complete the flow first, and explain everything one by one at the end".
+   From then on the AI kept replies short (step header, what was built, one Terminal block, expected result) and the explanations are saved for my
+   interview preparation.
+4. The kickoff rule "challenge risky decisions" is why the AI inspected the generated Xcode project (Step 8) and removed settings that would break a
+   reviewer's build, instead of just building on top of it.
+5. (add 1-2 of your own prompts that mattered)
 
 ## Where the AI got something wrong, and how I caught it
 - Step 2: the AI put `#` comment lines inside the Terminal block. macOS zsh does not accept `#` comments when
@@ -52,16 +57,28 @@
   update the screen off the main thread, so view models are `@MainActor` and their tests are too.
 - Step 9: the AI's first Swift build failed: `RemoteImageView()` and `StateView()` had no plain `init()` because each class defines its own
   `init(frame:)`. Caught by the compiler on my Mac (the AI cannot compile Swift). Fixed with a small convenience init in both classes.
-- Environment finding: this Mac has only Xcode Command Line Tools selected (`xcodebuild` fails). Needs fixing
-  before the iOS steps.
+- Steps 10 and 11: the Swift compiled and the tests passed on the first run. That is NOT proof they are right (the AI cannot compile Swift, so a
+  green run on my Mac is the first real check). So I also ran the full flow by hand on the simulator against the real backend and Mailpit
+  (screenshots in `docs/screenshots`).
+- Step 11: the coverage report showed what the tests do not prove: `CategoryCell` and `SectionHeaderView` at 0%, `ProductCell` at 11%, because the
+  tests never lay out the real collection view. Recorded as a known gap in DECISIONS.md instead of hiding it.
+- Environment finding (fixed in Step 2): this Mac had only Xcode Command Line Tools selected (`xcodebuild` failed).
 
 ## My own review notes
 - (add your own notes here as you review each step)
 
 ## Time spent (honest log)
-| Phase     | Time | Notes |
-|-----------|------|-------|
-| Planning  | started 14:15 (IST, 21 Nov) | steps 1-2 |
-| Building  |      | |
-| Testing   |      | |
-| Reviewing |      | |
+Wall-clock times come from the git commit times (IST, 21 Nov). They include time spent waiting for AI replies, running commands and reading.
+Please correct them with your real active time before submitting.
+
+| Phase | Wall-clock | Notes |
+|-------|------------|-------|
+| Planning and repo setup | 14:15 - 15:14 | structure, rules, repo, docker-compose (Steps 1-2) |
+| Backend building | 15:14 - 17:46 | foundation, services, routes, enquiry and email, Docker (Steps 3-6) |
+| Backend testing | 17:46 - 17:59 | gap tests, architecture test, coverage (Step 7) |
+| iOS building | 17:59 - 18:46 | project, networking, all screens (Steps 8-10) |
+| iOS testing | 18:46 - 18:55 | wiring, router, layout and image tests (Step 11) |
+| Docs and final review | 18:56 - (fill in) | README, DECISIONS, AI_USAGE, PR (Steps 12-13) |
+
+Total so far: about 4 hours 40 minutes from the first message to the last test run.
+My own review time (reading the code, running the flow, asking the AI to explain): (fill in)
