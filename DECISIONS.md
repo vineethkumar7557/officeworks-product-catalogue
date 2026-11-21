@@ -26,6 +26,20 @@
 - **The port returns `null` for a missing product.** The service decides that this means "not found" for the API.
 - **Plain CommonJS TypeScript.** No import-extension rules to explain; works the same in tests, dev and Docker.
 
+## API contract (all errors use one format)
+- `GET /health` -> `{ "status": "ok" }`
+- `GET /featured` -> `{ "products": [Product] }`
+- `GET /categories` -> `{ "categories": [String] }`
+- `GET /categories/:name/products` -> `{ "category", "topRated": [Product], "others": [Product] }` (unknown name: 404)
+- `GET /products?q=` -> `{ "query", "products": [Product] }` (missing or blank `q`: 400)
+- `GET /products/:id` -> `Product` (bad id: 400, unknown id: 404)
+- `POST /enquiries` -> added in Step 6
+- Errors: `{ "error": { "code", "message", "details?" } }` with codes VALIDATION_ERROR (400), INVALID_JSON (400),
+  NOT_FOUND (404), PAYLOAD_TOO_LARGE (413), UPSTREAM_ERROR (502), INTERNAL_ERROR (500, never shows internal details).
+- Product ids must be digits only (1 to 999,999,999). Input like `1e3`, `1.5`, `-1` or `abc` is rejected with 400.
+- Request bodies are limited to 10 KB. `/health` is an extra endpoint for Docker and quick checks.
+- Express 5, so errors thrown inside async routes reach the error handler without extra wrapper code.
+
 ## Requirements dropped or simplified, and why
 - No database for enquiries: the brief only asks for an email. Storing enquiries is the first thing to add next.
 - No UI tests: time-box.

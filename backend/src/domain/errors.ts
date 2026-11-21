@@ -13,3 +13,19 @@ export class UpstreamError extends Error {
     this.name = 'UpstreamError';
   }
 }
+
+export interface FieldProblem {
+  field: string;
+  message: string;
+}
+
+// The caller sent input we cannot accept. "details" says which field and why.
+export class ValidationError extends Error {
+  readonly details: FieldProblem[];
+
+  constructor(details: FieldProblem[]) {
+    super('The request is not valid.');
+    this.name = 'ValidationError';
+    this.details = details;
+  }
+}

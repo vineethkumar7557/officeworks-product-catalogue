@@ -30,6 +30,9 @@
   `mock.calls[0][0]` on a mock with no parameters). Tests alone did not show it; running typecheck did. Fixed.
 - Step 3: the AI could not reach Fake Store from its own machine, so the adapter was proven with mocked tests
   only. The real call is checked by me on my Mac with `npm run try:fakestore`.
+- Step 5: running the real server showed two things the unit tests did not: (a) a missing `q` gave the unfriendly
+  message "expected string, received undefined" (fixed with a clear message and a test), and (b) stopping the
+  server started with `tsx` by its process id left it running (so the smoke test uses the compiled server).
 - Environment finding: this Mac has only Xcode Command Line Tools selected (`xcodebuild` fails). Needs fixing
   before the iOS steps.
 
