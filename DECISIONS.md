@@ -100,6 +100,19 @@
 - **Home loads featured products and categories one after the other** (two small requests). Loading them in parallel would be a possible next step.
 - **No pull-to-refresh and no pagination** (20 products in total). Recorded as a cut.
 
+## Design choices (iOS details and enquiry)
+- **Details page uses the product the customer tapped.** It is already loaded, so there is no second request and no loading state.
+  The backend's `GET /products/:id` stays available (a link or notification would need it), but the app does not use it yet.
+- **The enquiry form opens as a sheet on top of the catalogue**, with its own Cancel button. After a successful send, the same sheet shows "Thank you!"
+  and a Done button that closes everything. The customer lands back on the details page.
+- **The form checks itself first** (name, valid email, optional phone, message) with the same rules and limits as the backend, so mistakes show next to
+  the field straight away. The backend still validates everything, because the app is not trusted.
+- **Sending:** the button shows a spinner and the fields lock, so a double tap cannot send two emails. The view model also ignores a second submit
+  while one is running. A backend error (for example "too many enquiries") shows its message above the button, and the typed text is kept.
+- **The Thank you screen is static**, so it has no view model. Every screen with logic has a ViewController and a ViewModel.
+- **Not kept:** a half-written enquiry is lost if the customer cancels (no draft saving).
+- **The Thank you text is written in the app.** The backend also sends a message, but the app ignores it so the wording and language stay in one place.
+
 ## Requirements dropped or simplified, and why
 - No database for enquiries: the brief only asks for an email. Storing enquiries is the first thing to add next.
 - No UI tests for the iOS app: time-box.
