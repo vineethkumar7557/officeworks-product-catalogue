@@ -3,7 +3,9 @@
 ## Folder structure
 ```
 backend/   src/{config,domain,ports,adapters,services,routes,middleware}, app.ts, server.ts, tests/, Dockerfile, .env.example
-ios/       CatalogueApp/{App,Networking,Models,Features,Shared}, CatalogueAppTests/
+ios/       CatalogueApp/CatalogueApp.xcodeproj
+           CatalogueApp/CatalogueApp/{App,Networking,Models,Features,Shared}   (app source)
+           CatalogueApp/CatalogueAppTests/                                      (XCTest)
 root       docker-compose.yml, README.md, DECISIONS.md, AI_USAGE.md, CLAUDE.md, PLAN.md
 ```
 

@@ -72,6 +72,23 @@
 - **What tests prove vs. what they do not.** Unit tests prove our logic. The real Fake Store and a real SMTP server are checked by hand
   (`npm run try:fakestore` and `docker compose up`) because tests must not depend on the internet.
 
+## Design choices (iOS app foundation)
+- **Code-only UIKit, MVVM, plain async/await.** No storyboards (template storyboards deleted, generated launch screen), no SwiftUI, no Combine,
+  no third-party libraries. Each screen has a ViewController and a ViewModel; view models only know the `APIClient` protocol.
+- **iPhone only, portrait only, iOS 17 and up.** A deliberate scope cut: one layout to build and check. The Xcode default minimum (iOS 27.2)
+  was lowered so a reviewer's simulator can run it.
+- **Project settings kept plain.** I removed the template's default main-actor isolation and "approachable concurrency" flags, so concurrency
+  behaves the standard way and is easy to explain. I removed my personal signing team ID so a reviewer can build without my account,
+  and removed the unused UI-tests target (no UI tests, see below).
+- **Requires Xcode 27.** The project was created with Xcode 27.2 and uses its newer project file format, so older Xcode versions cannot open it.
+- **The backend address lives in Info.plist** (`API_BASE_URL`, default `http://localhost:3000`). `NSAllowsLocalNetworking` lets the simulator use plain
+  http to a local server only. A real release would use https and remove that exception.
+- **Product images** are loaded from the `imageUrl` our backend returns (today a Fake Store picture link). The app never calls the Fake Store API
+  and never contains a Fake Store address. A real catalogue would return images from its own storage, which is a change inside the backend adapter.
+- **Errors:** one `APIError` type with customer-readable text. A cancelled request (the user went back) is not shown as an error.
+- **Unit tests start the app without building any screen or making network calls** (the scene delegate skips setup when XCTest is running).
+- **Home screen in Step 8 is a temporary check screen** that proves the app reaches the backend. Step 9 replaces it.
+
 ## Requirements dropped or simplified, and why
 - No database for enquiries: the brief only asks for an email. Storing enquiries is the first thing to add next.
 - No UI tests for the iOS app: time-box.

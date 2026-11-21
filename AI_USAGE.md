@@ -41,6 +41,13 @@
 - Step 7: `npm run typecheck` caught that the new `vitest.config.ts` did not fit this CommonJS project. Renamed to `.mts`.
 - Step 7: coverage numbers were measured first, so the new tests target real gaps (wiring in `server.ts`, the real mail transport,
   failed answers being cached) and not guesses.
+- Step 8: the AI assumed the classic Xcode "New Project" wizard. In Xcode 27 clicking "App" opened an untitled SwiftUI project instead,
+  which I noticed from a screenshot, and we redid it via File > New > Project.
+- Step 8: the AI read the generated project file before changing it and found defaults that would break a reviewer's build:
+  minimum iOS 27.2, my personal signing team ID, a UI-tests target we do not want, iPad support, and main-actor-by-default concurrency.
+  They were changed and the project file was re-checked for valid structure.
+- Step 8: the AI has no Swift compiler on its own machine, so the Swift code was only reviewed by reading. It is compiled and tested on my Mac
+  with `xcodebuild test`.
 - Environment finding: this Mac has only Xcode Command Line Tools selected (`xcodebuild` fails). Needs fixing
   before the iOS steps.
 

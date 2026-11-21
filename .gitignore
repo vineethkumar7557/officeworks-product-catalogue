@@ -15,5 +15,8 @@ DerivedData/
 *.xcuserstate
 build/
 
+# Build and test logs
+*.log
+
 # The company's challenge PDF is not ours to publish
 Code_Challenge*.pdf
