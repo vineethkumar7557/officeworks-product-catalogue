@@ -113,6 +113,15 @@
 - **Not kept:** a half-written enquiry is lost if the customer cancels (no draft saving).
 - **The Thank you text is written in the app.** The backend also sends a message, but the app ignores it so the wording and language stay in one place.
 
+## Testing approach (iOS)
+- **Three layers of unit tests, all fast and offline:** (1) networking against a pretend network (`MockURLProtocol`), (2) view models against a pretend backend
+  (`MockAPIClient`), (3) screen wiring: each screen is created with a pretend backend and the tests check what it shows and what a tap reports
+  (for example, typing in the search bar sends nothing, and only the Search key does).
+- **`AppRouterTests`** check which screen opens after each tap, and that a sent enquiry ends on the Thank you screen.
+- **No UI tests and no screenshot tests.** They are slow and fragile, and the screens have no logic of their own. The full flow was also checked by hand
+  on a simulator against the real backend and Mailpit (see the PR description).
+- **Coverage is measured but not enforced** on iOS. Layout and pixel details are checked by eye, not by tests.
+
 ## Requirements dropped or simplified, and why
 - No database for enquiries: the brief only asks for an email. Storing enquiries is the first thing to add next.
 - No UI tests for the iOS app: time-box.
