@@ -89,6 +89,17 @@
 - **Unit tests start the app without building any screen or making network calls** (the scene delegate skips setup when XCTest is running).
 - **Home screen in Step 8 is a temporary check screen** that proves the app reaches the backend. Step 9 replaces it.
 
+## Design choices (iOS screens)
+- **Navigation:** screens never open other screens. They report taps through closures, and `AppRouter` decides what opens next. Fewer links between screens, and easy to follow.
+- **Product tiles:** a two-column `UICollectionView` (standard flow layout). The tile height is worked out from the fonts, so text follows the user's text size. Category and Search have the same grid.
+- **Search:** typing searches nothing. Only the Search key on the keyboard sends the search (blank text is ignored), and the results open on their own screen. This matches "after tapping Search".
+- **State handling:** every screen is one of loading, loaded, empty or failed. Failed and empty home/category screens offer "Try again".
+- **View models** are `@MainActor`, so state changes always happen on the main thread. They tell the screen about changes with one closure (`onStateChange`), no Combine.
+- **Pictures** load with a small in-memory cache (`NSCache`). A tile that scrolls away cancels its download. A missing picture shows a placeholder.
+- **Prices** show a plain `$`, because the catalogue has no currency field. A real catalogue would send a currency code.
+- **Home loads featured products and categories one after the other** (two small requests). Loading them in parallel would be a possible next step.
+- **No pull-to-refresh and no pagination** (20 products in total). Recorded as a cut.
+
 ## Requirements dropped or simplified, and why
 - No database for enquiries: the brief only asks for an email. Storing enquiries is the first thing to add next.
 - No UI tests for the iOS app: time-box.

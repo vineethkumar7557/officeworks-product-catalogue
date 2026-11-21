@@ -48,6 +48,10 @@
   They were changed and the project file was re-checked for valid structure.
 - Step 8: the AI has no Swift compiler on its own machine, so the Swift code was only reviewed by reading. It is compiled and tested on my Mac
   with `xcodebuild test`.
+- Step 9: Swift code again written without a compiler. Concurrency risk noted by the AI up front: a non-isolated async view model would
+  update the screen off the main thread, so view models are `@MainActor` and their tests are too.
+- Step 9: the AI's first Swift build failed: `RemoteImageView()` and `StateView()` had no plain `init()` because each class defines its own
+  `init(frame:)`. Caught by the compiler on my Mac (the AI cannot compile Swift). Fixed with a small convenience init in both classes.
 - Environment finding: this Mac has only Xcode Command Line Tools selected (`xcodebuild` fails). Needs fixing
   before the iOS steps.
 
