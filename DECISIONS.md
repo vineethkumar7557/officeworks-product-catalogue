@@ -60,9 +60,23 @@
 - **Docker:** two-stage backend image (build, then a small run image as a non-root user). `docker compose up --build` starts the
   backend and Mailpit; `backend/.env` is optional because every setting has a default. Inside Docker the backend reaches Mailpit as `mailpit`.
 
+## Testing approach (backend)
+- **Three layers of tests:** services are tested alone with a fake in-memory data source; the adapters are tested with a pretend
+  internet and a pretend mail server; the API is tested through the real routes with Supertest, for every endpoint and every error code.
+- **Whole-chain tests:** `realAdapterApi.test.ts` runs route -> service -> real Fake Store adapter with a pretend internet, and checks the app
+  never sees the Fake Store format. `composition.test.ts` checks that each setting reaches the part it is meant for.
+- **The architecture is enforced by a test** (`architecture.test.ts`): only `composition.ts` may import adapters, services/domain/ports never import
+  Express, and only adapters import nodemailer. Swapping the data source or email provider therefore cannot quietly leak into services or routes.
+- **Coverage is measured** (`npm run test:coverage`) with a safety net: the check fails if coverage drops under 95% (90% for branches).
+  It is 100% today. Type-only files and the 3-line `server.ts` are left out of the count.
+- **What tests prove vs. what they do not.** Unit tests prove our logic. The real Fake Store and a real SMTP server are checked by hand
+  (`npm run try:fakestore` and `docker compose up`) because tests must not depend on the internet.
+
 ## Requirements dropped or simplified, and why
 - No database for enquiries: the brief only asks for an email. Storing enquiries is the first thing to add next.
-- No UI tests: time-box.
+- No UI tests for the iOS app: time-box.
+- No automatic CI pipeline (for example GitHub Actions): the same commands run locally; adding CI is the first "next step".
+- No shared test for "any ProductRepository behaves the same" (a contract test). It would prove an adapter swap even more strongly.
 - (more are added as we go)
 
 ## How the design supports growing beyond the PoC

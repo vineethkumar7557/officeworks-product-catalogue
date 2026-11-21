@@ -16,7 +16,8 @@ but ONLY through our backend.
 - Backend: routes -> services -> ports (interfaces) -> adapters.
   - ProductRepository (port) / FakeStoreProductRepository (adapter)
   - EmailSender (port) / SmtpEmailSender (adapter)
-  - Services and routes never import an adapter directly. Adapters are wired in one place (server.ts); app.ts only receives ready-made services.
+  - Services and routes never import an adapter directly. Adapters are wired in one place (composition.ts); app.ts only receives ready-made services.
+    A test (architecture.test.ts) fails if any other file imports an adapter.
   - The backend returns its own clean Product shape. The app never sees the Fake Store format.
 - iOS: View -> ViewModel -> APIClient (a protocol, so tests use a mock).
   Colours, fonts and spacing live in one Theme file.

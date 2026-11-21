@@ -32,4 +32,11 @@ describe('SmtpEmailSender', () => {
 
     await expect(sender.send(message)).rejects.toThrow(UpstreamError);
   });
+
+  it('gives an UpstreamError when the real mail server cannot be reached', async () => {
+    // No transport is passed, so this uses the real one. Port 1 has no mail server.
+    const sender = new SmtpEmailSender({ host: '127.0.0.1', port: 1, from: 'catalogue@test.example' });
+
+    await expect(sender.send(message)).rejects.toThrow(UpstreamError);
+  });
 });

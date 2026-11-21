@@ -41,4 +41,28 @@ describe('loadConfig', () => {
   it('refuses a sales inbox that is not an email address', () => {
     expect(() => loadConfig({ SALES_INBOX_EMAIL: 'nope' })).toThrow('SALES_INBOX_EMAIL');
   });
+
+  it('reads the email, rate limit, CORS and Fake Store settings', () => {
+    const config = loadConfig({
+      SMTP_HOST: 'mail.test',
+      SMTP_PORT: '2525',
+      EMAIL_FROM: 'shop@test.example',
+      ENQUIRY_RATE_LIMIT_MAX: '3',
+      ENQUIRY_RATE_LIMIT_WINDOW_MINUTES: '1',
+      CORS_ORIGIN: 'https://shop.test',
+      FAKE_STORE_BASE_URL: 'https://store.test',
+      FAKE_STORE_TIMEOUT_MS: '100',
+    });
+
+    expect(config.email).toEqual({
+      smtpHost: 'mail.test',
+      smtpPort: 2525,
+      from: 'shop@test.example',
+      salesInbox: 'sales@example.com',
+    });
+    expect(config.enquiryRateLimit).toEqual({ max: 3, windowMs: 60_000 });
+    expect(config.corsOrigin).toBe('https://shop.test');
+    expect(config.fakeStore.baseUrl).toBe('https://store.test');
+    expect(config.fakeStore.timeoutMs).toBe(100);
+  });
 });

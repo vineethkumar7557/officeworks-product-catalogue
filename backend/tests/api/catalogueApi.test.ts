@@ -167,3 +167,19 @@ describe('errors and safety', () => {
     expect(response.headers['access-control-allow-origin']).toBe(testCorsOrigin);
   });
 });
+
+describe('input limits', () => {
+  it('answers 400 for a category name that is too long', async () => {
+    const response = await request(app).get(`/categories/${'a'.repeat(101)}/products`);
+
+    expect(response.status).toBe(400);
+    expect(response.body.error.details[0].field).toBe('name');
+  });
+
+  it('answers 400 for a search that is too long', async () => {
+    const response = await request(app).get('/products').query({ q: 'a'.repeat(101) });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error.details[0].field).toBe('q');
+  });
+});

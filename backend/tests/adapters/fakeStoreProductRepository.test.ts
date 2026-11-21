@@ -131,4 +131,20 @@ describe('FakeStoreProductRepository', () => {
 
     await expect(repository.getAll()).rejects.toThrow('took too long');
   });
+
+  it('does not keep a failed answer in the cache', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    fetchMock.mockResolvedValueOnce(jsonResponse({}, 500));
+    fetchMock.mockResolvedValueOnce(jsonResponse(rawFakeStoreProducts));
+    const repository = createRepository(fetchMock);
+
+    await expect(repository.getAll()).rejects.toThrow(UpstreamError);
+    expect(await repository.getAll()).toHaveLength(4);
+  });
+
+  it('gives an UpstreamError when the answer is not a list of products', async () => {
+    const repository = createRepository(vi.fn(async () => jsonResponse({ products: [] })));
+
+    await expect(repository.getAll()).rejects.toThrow('unexpected format');
+  });
 });

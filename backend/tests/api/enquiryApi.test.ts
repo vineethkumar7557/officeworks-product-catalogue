@@ -144,3 +144,30 @@ describe('POST /enquiries', () => {
     expect(third.body.error.code).toBe('TOO_MANY_REQUESTS');
   });
 });
+
+describe('POST /enquiries safety', () => {
+  it('refuses an email address that tries to add extra email headers', async () => {
+    const emailSender = new FakeEmailSender();
+    const app = createTestApp({ emailSender });
+
+    const response = await request(app)
+      .post('/enquiries')
+      .send({ ...validEnquiry, email: 'asha@example.com\nBcc: someone@evil.example' });
+
+    expect(response.status).toBe(400);
+    expect(emailSender.sent).toHaveLength(0);
+  });
+
+  it('keeps the subject and reply-to clean when the name contains a new line', async () => {
+    const emailSender = new FakeEmailSender();
+    const app = createTestApp({ emailSender });
+
+    const response = await request(app)
+      .post('/enquiries')
+      .send({ ...validEnquiry, name: 'Asha\nBcc: someone@evil.example' });
+
+    expect(response.status).toBe(201);
+    expect(emailSender.sent[0].subject).toBe('New enquiry: Gold Bracelet');
+    expect(emailSender.sent[0].replyTo).toBe('asha@example.com');
+  });
+});

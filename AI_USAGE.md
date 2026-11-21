@@ -36,6 +36,11 @@
 - Step 6: the AI could not run Docker on its own machine, so the Dockerfile and docker-compose were only checked by
   reading. The email path was proven with a throwaway SMTP server and a stand-in Fake Store, and the Docker run is
   checked by me with `docker compose up --build` on my Mac.
+- Step 7: the AI's first draft of the architecture test had a fourth rule ("only adapters may mention Fake Store") that needed a
+  confusing text-cleaning trick. I dropped it because I could not explain it simply, and kept three clear rules.
+- Step 7: `npm run typecheck` caught that the new `vitest.config.ts` did not fit this CommonJS project. Renamed to `.mts`.
+- Step 7: coverage numbers were measured first, so the new tests target real gaps (wiring in `server.ts`, the real mail transport,
+  failed answers being cached) and not guesses.
 - Environment finding: this Mac has only Xcode Command Line Tools selected (`xcodebuild` fails). Needs fixing
   before the iOS steps.
 
