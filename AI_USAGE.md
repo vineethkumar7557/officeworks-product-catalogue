@@ -68,17 +68,17 @@
 - (add your own notes here as you review each step)
 
 ## Time spent (honest log)
-Wall-clock times come from the git commit times (IST, 21 Nov). They include time spent waiting for AI replies, running commands and reading.
-Please correct them with your real active time before submitting.
+I did not work in one sitting: I stepped away from the task several times (the biggest gap in the commit times is the long stretch during Step 3).
+So the wall-clock column below is NOT the time I worked. It is only the span between commits (IST, 21 Nov), and it includes breaks,
+waiting for AI replies and running commands. The "Active" column is my own estimate of time actually spent.
 
-| Phase | Wall-clock | Notes |
-|-------|------------|-------|
-| Planning and repo setup | 14:15 - 15:14 | structure, rules, repo, docker-compose (Steps 1-2) |
-| Backend building | 15:14 - 17:46 | foundation, services, routes, enquiry and email, Docker (Steps 3-6) |
-| Backend testing | 17:46 - 17:59 | gap tests, architecture test, coverage (Step 7) |
-| iOS building | 17:59 - 18:46 | project, networking, all screens (Steps 8-10) |
-| iOS testing | 18:46 - 18:55 | wiring, router, layout and image tests (Step 11) |
-| Docs and final review | 18:56 - (fill in) | README, DECISIONS, AI_USAGE, PR (Steps 12-13) |
+| Phase | Wall-clock span | Breaks | Active (my estimate) | Notes |
+|-------|-----------------|--------|----------------------|-------|
+| Planning and repo setup | 14:15 - 15:14 | (fill in) | (fill in) | structure, rules, repo, docker-compose (Steps 1-2) |
+| Backend building | 15:14 - 17:46 | (fill in) | (fill in) | foundation, services, routes, enquiry and email, Docker (Steps 3-6) |
+| Backend testing | 17:46 - 17:59 | (fill in) | (fill in) | gap tests, architecture test, coverage (Step 7) |
+| iOS building | 17:59 - 18:46 | (fill in) | (fill in) | project, networking, all screens (Steps 8-10) |
+| iOS testing | 18:46 - 18:55 | (fill in) | (fill in) | wiring, router, layout and image tests (Step 11) |
+| Docs, review, PR | 18:56 - (fill in) | (fill in) | (fill in) | README, DECISIONS, AI_USAGE, PR (Steps 12-13) |
 
-Total so far: about 4 hours 40 minutes from the first message to the last test run.
 My own review time (reading the code, running the flow, asking the AI to explain): (fill in)
