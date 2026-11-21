@@ -33,6 +33,9 @@
 - Step 5: running the real server showed two things the unit tests did not: (a) a missing `q` gave the unfriendly
   message "expected string, received undefined" (fixed with a clear message and a test), and (b) stopping the
   server started with `tsx` by its process id left it running (so the smoke test uses the compiled server).
+- Step 6: the AI could not run Docker on its own machine, so the Dockerfile and docker-compose were only checked by
+  reading. The email path was proven with a throwaway SMTP server and a stand-in Fake Store, and the Docker run is
+  checked by me with `docker compose up --build` on my Mac.
 - Environment finding: this Mac has only Xcode Command Line Tools selected (`xcodebuild` fails). Needs fixing
   before the iOS steps.
 

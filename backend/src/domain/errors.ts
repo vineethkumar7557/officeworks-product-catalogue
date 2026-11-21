@@ -29,3 +29,11 @@ export class ValidationError extends Error {
     this.details = details;
   }
 }
+
+// Too many requests from one caller in a short time.
+export class TooManyRequestsError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'TooManyRequestsError';
+  }
+}

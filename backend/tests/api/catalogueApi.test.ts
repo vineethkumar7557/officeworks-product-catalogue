@@ -133,7 +133,7 @@ describe('errors and safety', () => {
 
   it('answers 502 when the product source fails', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
-    const brokenApp = createTestApp(failingRepository(new UpstreamError('The product source is down.')));
+    const brokenApp = createTestApp({ repository: failingRepository(new UpstreamError('The product source is down.')) });
 
     const response = await request(brokenApp).get('/featured');
 
@@ -144,7 +144,7 @@ describe('errors and safety', () => {
 
   it('answers 500 for an unexpected error without leaking its details', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
-    const brokenApp = createTestApp(failingRepository(new Error('secret database password')));
+    const brokenApp = createTestApp({ repository: failingRepository(new Error('secret database password')) });
 
     const response = await request(brokenApp).get('/featured');
 

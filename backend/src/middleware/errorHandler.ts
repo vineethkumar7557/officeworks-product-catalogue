@@ -1,5 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
-import { FieldProblem, NotFoundError, UpstreamError, ValidationError } from '../domain/errors';
+import {
+  FieldProblem,
+  NotFoundError,
+  TooManyRequestsError,
+  UpstreamError,
+  ValidationError,
+} from '../domain/errors';
 
 // Every error the API sends has this one shape.
 interface ErrorBody {
@@ -29,6 +35,9 @@ function toErrorResponse(error: unknown): ErrorResponse {
   }
   if (error instanceof NotFoundError) {
     return build(404, 'NOT_FOUND', error.message);
+  }
+  if (error instanceof TooManyRequestsError) {
+    return build(429, 'TOO_MANY_REQUESTS', error.message);
   }
   if (error instanceof UpstreamError) {
     return build(502, 'UPSTREAM_ERROR', error.message);

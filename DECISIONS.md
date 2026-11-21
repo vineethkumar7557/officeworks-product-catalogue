@@ -33,12 +33,32 @@
 - `GET /categories/:name/products` -> `{ "category", "topRated": [Product], "others": [Product] }` (unknown name: 404)
 - `GET /products?q=` -> `{ "query", "products": [Product] }` (missing or blank `q`: 400)
 - `GET /products/:id` -> `Product` (bad id: 400, unknown id: 404)
-- `POST /enquiries` -> added in Step 6
+- `POST /enquiries` with `{ name, email, phone?, message, productId }` -> 201 `{ "message": "Thank you ..." }`.
+  Bad input: 400 (field named). Unknown product: 404. Email failed: 502 (the customer is NOT told "thank you").
+  Too many from one IP address: 429.
 - Errors: `{ "error": { "code", "message", "details?" } }` with codes VALIDATION_ERROR (400), INVALID_JSON (400),
-  NOT_FOUND (404), PAYLOAD_TOO_LARGE (413), UPSTREAM_ERROR (502), INTERNAL_ERROR (500, never shows internal details).
+  NOT_FOUND (404), PAYLOAD_TOO_LARGE (413), TOO_MANY_REQUESTS (429), UPSTREAM_ERROR (502),
+  INTERNAL_ERROR (500, never shows internal details).
 - Product ids must be digits only (1 to 999,999,999). Input like `1e3`, `1.5`, `-1` or `abc` is rejected with 400.
 - Request bodies are limited to 10 KB. `/health` is an extra endpoint for Docker and quick checks.
 - Express 5, so errors thrown inside async routes reach the error handler without extra wrapper code.
+
+## Design choices (enquiry and email)
+- **Enquiry checks:** name 1-100 characters, email valid (max 254), phone optional (6-20 characters: digits, spaces, `+ ( ) -`;
+  empty counts as not given), message 1-2000 characters, `productId` a whole number. Spaces around text are trimmed.
+- **The product must exist.** An enquiry about an unknown product is rejected (404), so sales never gets an email about nothing.
+- **Email is sent before we answer.** If sending fails the customer gets an error and can retry. They never see a false "thank you".
+- **Reply-To is the customer's email,** so sales can answer straight from their inbox. The subject only uses the product title
+  (never customer text), so customers cannot inject email headers.
+- **Logging without personal data.** The log says "an enquiry was emailed for product N" but never includes name, email, phone or message.
+  The brief asks only for the email, so there is no database yet (deliberate cut).
+- **Rate limit:** `ENQUIRY_RATE_LIMIT_MAX` enquiries per `ENQUIRY_RATE_LIMIT_WINDOW_MINUTES` per IP address (default 5 per 15 minutes),
+  kept in memory. Limits: it resets when the server restarts and is per server instance. Behind a load balancer (AWS) we must also
+  set Express "trust proxy" so the real caller IP is used. Next step would be a shared store such as Redis.
+- **SMTP without login.** Mailpit needs none. A real provider (SES, SendGrid) would need a user, password and TLS: a new adapter
+  or extra settings, and no change to the service.
+- **Docker:** two-stage backend image (build, then a small run image as a non-root user). `docker compose up --build` starts the
+  backend and Mailpit; `backend/.env` is optional because every setting has a default. Inside Docker the backend reaches Mailpit as `mailpit`.
 
 ## Requirements dropped or simplified, and why
 - No database for enquiries: the brief only asks for an email. Storing enquiries is the first thing to add next.

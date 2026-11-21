@@ -1,11 +1,14 @@
 import { Express } from 'express';
 import { createApp } from '../../src/app';
 import { Product } from '../../src/domain/product';
+import { EmailSender } from '../../src/ports/emailSender';
 import { ProductRepository } from '../../src/ports/productRepository';
 import { CategoryService } from '../../src/services/categoryService';
+import { EnquiryService } from '../../src/services/enquiryService';
 import { FeaturedService } from '../../src/services/featuredService';
 import { ProductService } from '../../src/services/productService';
 import { SearchService } from '../../src/services/searchService';
+import { FakeEmailSender } from './fakeEmailSender';
 import { InMemoryProductRepository } from './inMemoryProductRepository';
 import { makeProduct } from './makeProduct';
 
@@ -19,14 +22,27 @@ export const sampleProducts: Product[] = [
 ];
 
 export const testCorsOrigin = 'http://localhost:3000';
+export const testSalesInbox = 'sales@test.example';
 
-// Builds the real app with a fake data source, so API tests are fast and need no internet.
-export function createTestApp(repository: ProductRepository = new InMemoryProductRepository(sampleProducts)): Express {
+interface TestAppOptions {
+  repository?: ProductRepository;
+  emailSender?: EmailSender;
+  rateLimit?: { max: number; windowMs: number };
+}
+
+// Builds the real app with fake pieces, so API tests are fast and need no internet or mail server.
+export function createTestApp(options: TestAppOptions = {}): Express {
+  const repository = options.repository ?? new InMemoryProductRepository(sampleProducts);
+  const emailSender = options.emailSender ?? new FakeEmailSender();
+  const productService = new ProductService(repository);
+
   return createApp({
     corsOrigin: testCorsOrigin,
     featuredService: new FeaturedService(repository, [6, 1, 5]),
     categoryService: new CategoryService(repository),
     searchService: new SearchService(repository),
-    productService: new ProductService(repository),
+    productService,
+    enquiryService: new EnquiryService(productService, emailSender, testSalesInbox),
+    enquiryRateLimit: options.rateLimit ?? { max: 1000, windowMs: 60_000 },
   });
 }
