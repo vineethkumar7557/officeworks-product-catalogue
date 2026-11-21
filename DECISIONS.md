@@ -13,6 +13,16 @@
   apostrophes (for example "men's clothing") are URL-encoded by the app and decoded by the backend.
 - **Repo:** private GitHub repo, with access given to the reviewers.
 
+## Design choices (backend foundation)
+- **One cached call to Fake Store.** Fake Store has only 20 products, so the adapter loads `/products` once, keeps it
+  in memory for `CACHE_TTL_SECONDS`, and answers by-id, by-category and category-list questions from that list.
+  Fewer calls, and it avoids Fake Store's odd empty answer for a missing id. With a real database these become real queries.
+- **Strict checking of Fake Store data (zod).** If their data changes shape we fail with a clear 502-style error
+  instead of showing broken products.
+- **Timeout on every Fake Store call** (`FAKE_STORE_TIMEOUT_MS`). Slow or failing source = `UpstreamError`.
+- **The port returns `null` for a missing product.** The service decides that this means "not found" for the API.
+- **Plain CommonJS TypeScript.** No import-extension rules to explain; works the same in tests, dev and Docker.
+
 ## Requirements dropped or simplified, and why
 - No database for enquiries: the brief only asks for an email. Storing enquiries is the first thing to add next.
 - No UI tests: time-box.

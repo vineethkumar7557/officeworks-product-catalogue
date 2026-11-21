@@ -23,6 +23,10 @@
   and a password prompt). Fixed with `git config` and `git commit --amend --reset-author`.
 - Step 2: the AI's first tool check ran in a separate Linux machine, not on my Mac, so it could not see my
   Docker/Xcode. Caught by the AI itself; I ran the version checks on my Mac instead.
+- Step 3: the AI's tests passed, but `npm run typecheck` found a type error in the test file (reading
+  `mock.calls[0][0]` on a mock with no parameters). Tests alone did not show it; running typecheck did. Fixed.
+- Step 3: the AI could not reach Fake Store from its own machine, so the adapter was proven with mocked tests
+  only. The real call is checked by me on my Mac with `npm run try:fakestore`.
 - Environment finding: this Mac has only Xcode Command Line Tools selected (`xcodebuild` fails). Needs fixing
   before the iOS steps.
 
