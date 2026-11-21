@@ -12,7 +12,10 @@
 ## Key prompts and moments
 1. Kickoff prompt: set the stack, architecture (ports and adapters), code style, git rules and "one step at a time".
    It also told the AI to challenge my decisions.
-2. (add the next ones as they happen)
+2. Step 4 (search): before writing code the AI pointed out that a plain "contains" search makes "men" also match
+   "women's clothing", and proposed "typed word must start a word in the product" matching. I accepted it and it is
+   covered by a test.
+3. (add the next ones as they happen)
 
 ## Where the AI got something wrong, and how I caught it
 - Step 2: the AI put `#` comment lines inside the Terminal block. macOS zsh does not accept `#` comments when

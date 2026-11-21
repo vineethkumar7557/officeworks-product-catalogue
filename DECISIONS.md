@@ -4,9 +4,12 @@
 - **Featured products:** 5 product IDs chosen in config (`FEATURED_PRODUCT_IDS`). Default is 12, 11, 3, 18, 5,
   the top 5 by rating (ties broken by rating count). If a configured ID is missing from the data,
   we fill the gap with the highest rated product not already shown.
-- **Category page:** top rated = the top 3 by rating (tie-break: higher rating count), then all other products in that category.
-- **Search:** case-insensitive match over title, description and category. Results appear only after the user taps Search.
-  An empty search term returns a 400 error, not "all products".
+- **Category page:** top rated = the top 3 by rating (tie-break: higher rating count, then lower id), then all other products
+  in that category, also best first. An unknown category gives a 404.
+- **Search:** case-insensitive, over title, description and category. Results appear only after the user taps Search.
+  Every typed word must be the START of a word in the product text, in any order. So "jack" finds "jacket",
+  but "men" does not wrongly find "women's clothing" (plain "contains" matching would). Results are best rated first.
+  An empty search finds nothing (the API will answer 400 for a missing or empty `q`, see Step 5).
 - **Enquiry fields:** name, email, optional phone, message, product ID. The enquiry is emailed to the sales inbox and logged.
   There is no database yet (deliberate cut, see below).
 - **Category names:** used exactly as Fake Store gives them (note the "jewelery" spelling). Names with spaces or
