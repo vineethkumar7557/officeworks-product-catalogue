@@ -1,0 +1,21 @@
+# Starts the backend and a local mail catcher with one command:
+#   docker compose up --build
+# (The backend Dockerfile arrives in a later step.)
+services:
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025" # web inbox: http://localhost:8025
+      - "1025:1025" # SMTP port the backend sends to
+
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
+    environment:
+      # Inside Docker, the mail catcher is reached by its service name
+      SMTP_HOST: mailpit
+    depends_on:
+      - mailpit
