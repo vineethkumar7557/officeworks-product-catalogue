@@ -14,7 +14,8 @@
   There is no database yet (deliberate cut, see below).
 - **Category names:** used exactly as Fake Store gives them (note the "jewelery" spelling). Names with spaces or
   apostrophes (for example "men's clothing") are URL-encoded by the app and decoded by the backend.
-- **Repo:** private GitHub repo, with access given to the reviewers.
+- **Repo:** public GitHub repository, as the recruiter's email asks. The challenge PDF is not committed (it is git-ignored), and no secrets
+  are in the code or the history (`.env` is ignored, only `.env.example` is committed).
 
 ## Design choices (backend foundation)
 - **One cached call to Fake Store.** Fake Store has only 20 products, so the adapter loads `/products` once, keeps it

@@ -20,7 +20,8 @@
    interview preparation.
 4. The kickoff rule "challenge risky decisions" is why the AI inspected the generated Xcode project (Step 8) and removed settings that would break a
    reviewer's build, instead of just building on top of it.
-5. (add 1-2 of your own prompts that mattered)
+5. Step 8: I sent a screenshot showing that Xcode had opened an untitled SwiftUI project from the welcome screen. That corrected the AI's
+   assumed "New Project" steps: we redid it with File > New > Project and a UIKit, code-only project.
 
 ## Where the AI got something wrong, and how I caught it
 - Step 2: the AI put `#` comment lines inside the Terminal block. macOS zsh does not accept `#` comments when
@@ -65,20 +66,27 @@
 - Environment finding (fixed in Step 2): this Mac had only Xcode Command Line Tools selected (`xcodebuild` failed).
 
 ## My own review notes
-- (add your own notes here as you review each step)
+- I ran every step on my own Mac and pasted back the real output, so every "tests pass" claim in this repo comes from my machine, not from the AI.
+- I ran the whole flow by hand on an iPhone 17 simulator against the real backend: Home, category, search for `men`, details, enquiry,
+  Thank you, and the email arriving in Mailpit (screenshots in `docs/screenshots`).
+- I did a clean-clone check: cloned the pushed branch into a new folder and followed the README (`docker compose up --build`, API calls,
+  one test enquiry, and the iOS tests). It all worked.
+- I asked the AI to keep the code simple enough for me to explain: small files, clear names, plain async/await, no clever tricks.
+- Known weak spots I accept for this time-box: no UI tests, some view code (cells) is not unit tested, and the project needs Xcode 27.
 
 ## Time spent (honest log)
-I did not work in one sitting: I stepped away from the task several times (the biggest gap in the commit times is the long stretch during Step 3).
-So the wall-clock column below is NOT the time I worked. It is only the span between commits (IST, 21 Nov), and it includes breaks,
-waiting for AI replies and running commands. The "Active" column is my own estimate of time actually spent.
+I did not work in one sitting: I stepped away from the task several times (the longest gap is during Step 3). The wall-clock spans below come
+from the git commit times (IST, 21 Nov) and include breaks, waiting for AI replies and running commands, so they are longer than the time I worked.
 
-| Phase | Wall-clock span | Breaks | Active (my estimate) | Notes |
-|-------|-----------------|--------|----------------------|-------|
-| Planning and repo setup | 14:15 - 15:14 | (fill in) | (fill in) | structure, rules, repo, docker-compose (Steps 1-2) |
-| Backend building | 15:14 - 17:46 | (fill in) | (fill in) | foundation, services, routes, enquiry and email, Docker (Steps 3-6) |
-| Backend testing | 17:46 - 17:59 | (fill in) | (fill in) | gap tests, architecture test, coverage (Step 7) |
-| iOS building | 17:59 - 18:46 | (fill in) | (fill in) | project, networking, all screens (Steps 8-10) |
-| iOS testing | 18:46 - 18:55 | (fill in) | (fill in) | wiring, router, layout and image tests (Step 11) |
-| Docs, review, PR | 18:56 - (fill in) | (fill in) | (fill in) | README, DECISIONS, AI_USAGE, PR (Steps 12-13) |
+| Phase | Wall-clock span | Notes |
+|-------|-----------------|-------|
+| Planning and repo setup | 14:15 - 15:14 | structure, rules, repo, docker-compose (Steps 1-2) |
+| Backend building | 15:14 - 17:46 | foundation, services, routes, enquiry and email, Docker (Steps 3-6) |
+| Backend testing | 17:46 - 17:59 | gap tests, architecture test, coverage (Step 7) |
+| iOS building | 17:59 - 18:46 | project, networking, all screens (Steps 8-10) |
+| iOS testing | 18:46 - 18:55 | wiring, router, layout and image tests (Step 11) |
+| Docs, review, PR | 18:56 - 19:10 | README, DECISIONS, AI_USAGE, clean-clone check, PR (Steps 12-13) |
 
-My own review time (reading the code, running the flow, asking the AI to explain): (fill in)
+- **Wall-clock total:** about 4 hours 55 minutes (14:15 to 19:10).
+- **Active working time:** about 3 hours (my own estimate), with roughly 2 hours of breaks in total (the longest gap is during Step 3).
+- My own review time (reading the output, running the app, checking the flow) is included in the active time above.
